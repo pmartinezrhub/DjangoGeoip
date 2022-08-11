@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="30" >
+    <title> GeoIP</title>
+    <style type="text/css"> 
+      html, body , #Map {
+             width: 80%;       
+          height: 80%;         
+          margin: 50px;
+      }    
+    </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="  crossorigin="anonymous"></script>
+    <script src="/GeoIPMap/templates/OpenLayers-2.13.1/OpenLayers.js"></script>
+  <script>
+      function init() {
+          $.getJSON('https://get.geojs.io/v1/ip/geo.json', function(data) {
+          var geoip_data = JSON.stringify(data, null, 2);
+          // alert(geoip_data);
+          var parsedData = JSON.parse(geoip_data);
+          var ip = parsedData.ip;
+          var longitude = parsedData.longitude;
+          var latitude = parsedData.latitude;         
+          var country = parsedData.country;
+          var city = parsedData.city;
+          //alert("logitude:" + longitude )
+          //fix to work between two scripts?
+          $("#longitude").val(longitude);
+          $("#latitude").val(latitude);
+          $("#ip").val(ip);
+          $("#country").val(country);
+          $("#city").val(city);
+          //alert(ip)*/
+        });
+        //calling values from jquery??
+        var longitude = document.getElementById("longitude").value;
+        var latitude = document.getElementById("latitude").value;  
+        map = new OpenLayers.Map("Map");
+        var mapnik         = new OpenLayers.Layer.OSM();
+        var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
+        var toProjection   = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
+        var position       = new OpenLayers.LonLat(longitude, latitude).transform( fromProjection, toProjection);
+        //var position       = new OpenLayers.LonLat(13.41,52.52).transform( fromProjection, toProjection);
+        var zoom           = 5; 
+        map.addLayer(mapnik);
+        var markers = new OpenLayers.Layer.Markers( "Markers" );
+        map.addLayer(markers);
+        markers.addMarker(new OpenLayers.Marker(position));
+        map.setCenter(position, zoom );
+      }
+    </script>
+</head>
+
+<body onload="init();">
+   <div id="Map"></div>
+<br>
+<center>
+Geoip location based on <a href='https://get.geojs.io/v1/ip/geo.json'>https://get.geojs.io/v1/ip/geo.json</a>
+<br><p>
+<form>
+Your IP <input type=text id="ip">
+Country <input type=text id="country">
+City <input type=text id="city">
+<br><p>
+Longitude<input type=text id='longitude' >
+Latitude<input type=text id='latitude' >
+</form>
+</center>
+
+</body>
+</html>
