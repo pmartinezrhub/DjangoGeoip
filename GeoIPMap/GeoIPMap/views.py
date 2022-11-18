@@ -26,23 +26,28 @@ def map(request):
     document = mapgeoip.render(ctx)
     return HttpResponse(document)
 
-
 def geoip(request):
     template_path = BASE_DIR.__str__() + "/GeoIPMap/templates/geoip.html"
     doc_ext = open(template_path)
     geoip = Template(doc_ext.read())
     doc_ext.close()
     now = datetime.date.today()
-    url_request = requests.get("http://ip-api.com/json")
+    ip_address_client = str(request.META.get("REMOTE_ADDR"))
+    client_ip_request = "http://ip-api.com/json/" + ip_address_client
+    url_request = requests.get(client_ip_request)
     text = url_request.text
     data = json.loads(text)
-    country_code = data["countryCode"]
-    country_name = data["country"]
+    log_file(data)
+    if data["countryCode"]:
+        country_code = data["countryCode"]
+    if data["country"]:
+        country = data["country"]
     #flag_country = FlagCountry(country = country_code)
     flag_link = "https://flagsworld.org/img/cflags/" + country_name +  "-flag.png"
     add_flag = {"flag": flag_link}
     data.update(add_flag)
-    print(data)
+    log_file(str(request.META.get("REMOTE_ADDR")))
+    ip_address_client = str(request.META.get("REMOTE_ADDR"))
     return render(request, template_path, data)
 
 
