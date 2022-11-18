@@ -41,7 +41,7 @@ def geoip(request):
     if data["countryCode"]:
         country_code = data["countryCode"]
     if data["country"]:
-        country = data["country"]
+        country_name = data["country"]
     #flag_country = FlagCountry(country = country_code)
     flag_link = "https://flagsworld.org/img/cflags/" + country_name +  "-flag.png"
     add_flag = {"flag": flag_link}
