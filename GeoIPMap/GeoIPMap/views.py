@@ -5,7 +5,7 @@ from django.template import Template, Context
 import json
 import os
 import requests
-
+import logging
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -50,7 +50,10 @@ def geoip(request):
     ip_address_client = str(request.META.get("REMOTE_ADDR"))
     return render(request, template_path, data)
 
-
+def log_file(data):
+    logging.basicConfig(level=logging.DEBUG,filename='a.log')   
+    logging.debug(str(data))
+    
 def about(request):
     template_path = BASE_DIR.__str__() + "/GeoIPMap/templates/acercade.html"
     doc_ext = open(template_path)
